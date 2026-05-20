@@ -2,24 +2,16 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchMemberDetail, fetchMembers } from '../api'
+import { normalizeMember } from '../utils/memberProfile'
 
 const route = useRoute()
 const member = ref(null)
 const allMembers = ref([])
 const loading = ref(true)
 
-function parseTags(tags) {
-  if (!tags) return []
-  if (Array.isArray(tags)) return tags
-  if (typeof tags === 'string') {
-    try { return JSON.parse(tags) } catch { return [] }
-  }
-  return []
-}
-
 onMounted(async () => {
   loadMember()
-  fetchMembers().then(d => { allMembers.value = (d ?? []).map(m => ({ ...m, tech_tags: parseTags(m.tech_tags), industry_tags: parseTags(m.industry_tags) })) })
+  fetchMembers().then(d => { allMembers.value = (d ?? []).map(m => normalizeMember(m)) })
 })
 
 watch(() => route.params.id, () => {
@@ -32,11 +24,8 @@ async function loadMember() {
   member.value = null
   const id = route.params.id
   const data = await fetchMemberDetail(id)
-  member.value = {
-    ...data,
-    tech_tags: parseTags(data?.tech_tags),
-    industry_tags: parseTags(data?.industry_tags)
-  }
+  const info = data?.info ?? data
+  member.value = info ? normalizeMember(info) : null
   loading.value = false
 }
 
@@ -72,11 +61,7 @@ const nextMember = computed(() => {
 })
 
 const categoryName = computed(() => {
-  const id = member.value?.category_id
-  if (id === 16) return '企业'
-  if (id === 15) return '研究院'
-  if (id === 14) return '高校'
-  return ''
+  return member.value?.categoryName ?? ''
 })
 </script>
 

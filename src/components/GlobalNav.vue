@@ -23,13 +23,15 @@ function scrollToSection(id) {
     <div class="nav-inner">
       <a href="/" class="nav-logo">高端装备制造联合实验室</a>
       <nav class="nav-links">
-        <a href="/" class="nav-link" :class="{ active: isHome }">首页</a>
+        <button class="nav-link" :class="{ active: isHome }" @click="scrollToSection('lab')">联合实验室</button>
         <button class="nav-link" @click="scrollToSection('services')">产业服务</button>
         <router-link to="/members" class="nav-link" :class="{ active: route.path.startsWith('/members') }">
           成员单位
         </router-link>
+        <router-link to="/experts" class="nav-link" :class="{ active: route.path.startsWith('/experts') }">
+          专家委员
+        </router-link>
       </nav>
-      <a href="/members" class="nav-cta">寻找合作单位</a>
     </div>
   </header>
 </template>
@@ -78,6 +80,7 @@ function scrollToSection(id) {
   display: flex;
   gap: 8px;
   flex: 1;
+  justify-content: flex-end;
 }
 .nav-link {
   background: none;
@@ -104,22 +107,10 @@ function scrollToSection(id) {
   color: #fff;
   background: rgba(255, 255, 255, 0.1);
 }
-.nav-cta {
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  padding: 8px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: filter 0.2s;
-}
-.nav-cta:hover {
-  filter: brightness(1.1);
-}
-
 @media (max-width: 768px) {
+  .global-nav {
+    padding: 0 12px;
+  }
   .nav-links {
     gap: 0;
   }
@@ -127,15 +118,30 @@ function scrollToSection(id) {
     font-size: 13px;
     padding: 6px 10px;
   }
-  .nav-cta {
-    font-size: 13px;
-    padding: 6px 14px;
-  }
   .nav-logo {
     font-size: 15px;
   }
   .nav-inner {
     gap: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-inner {
+    gap: 8px;
+  }
+  .nav-logo {
+    display: none;
+  }
+  .nav-links {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .nav-link {
+    flex: 1;
+    font-size: 12px;
+    padding: 6px 4px;
+    text-align: center;
   }
 }
 </style>

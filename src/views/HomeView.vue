@@ -1,31 +1,35 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { fetchBanners, fetchHomeContent, fetchMembers } from '../api'
+import { fetchBanners, fetchCategories, fetchHomeContent, fetchMembers } from '../api'
+import MemberDiscovery from '../components/MemberDiscovery.vue'
 
 const banners = ref([])
 const services = ref([])
 const subLabs = ref([])
 const stats = ref([])
 const members = ref([])
+const categories = ref([])
 
 onMounted(async () => {
-  const [bData, hData, mData] = await Promise.all([
+  const [bData, hData, mData, cData] = await Promise.all([
     fetchBanners(),
     fetchHomeContent(),
-    fetchMembers()
+    fetchMembers(),
+    fetchCategories()
   ])
   banners.value = bData ?? []
   services.value = hData?.service?.list ?? []
   subLabs.value = hData?.laboratory?.list ?? []
   stats.value = hData?.stats ?? []
   members.value = mData ?? []
+  categories.value = cData ?? []
 })
 </script>
 
 <template>
   <div class="home">
     <!-- Hero -->
-    <section class="hero">
+    <section id="lab" class="hero">
       <div class="hero-bg-pattern"></div>
       <div class="container hero-inner">
         <div class="hero-text">
@@ -164,14 +168,20 @@ onMounted(async () => {
       </div>
     </section>
 
-    <!-- 成员单位 CTA -->
-    <section class="section section-mid cta-section">
-      <div class="container cta-inner">
-        <h2>寻找合作伙伴</h2>
-        <p>
-          浏览 {{ members.length || 40 }}+ 成员单位，按技术能力和服务行业精准匹配
-        </p>
-        <router-link to="/members" class="btn-gold">查看全部成员单位</router-link>
+    <!-- 成员单位能力索引 -->
+    <section class="section member-discovery-section">
+      <div class="container">
+        <MemberDiscovery
+          :members="members"
+          :categories="categories"
+          title="成员单位能力地图"
+          subtitle="以高频关键词呈现实验室成员特色，按高校、研究院、企业三类快速查看协作资源。"
+          :limit="6"
+          compact
+        />
+        <div class="members-more">
+          <router-link to="/members" class="btn-gold">查看全部成员单位</router-link>
+        </div>
       </div>
     </section>
 
@@ -201,6 +211,7 @@ onMounted(async () => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  scroll-margin-top: 64px;
 }
 .hero-bg-pattern {
   position: absolute;
@@ -356,6 +367,10 @@ onMounted(async () => {
   color: #64748b;
 }
 
+#services {
+  scroll-margin-top: 64px;
+}
+
 /* ── Services grid ── */
 .services-grid {
   display: grid;
@@ -482,17 +497,14 @@ onMounted(async () => {
   background: rgba(200, 148, 62, 0.1);
 }
 
-/* ── CTA section ── */
-.cta-section {
-  text-align: center;
+/* ── Member discovery ── */
+.member-discovery-section {
+  background: var(--bg-light);
 }
-.cta-inner h2 {
-  margin-bottom: 12px;
-}
-.cta-inner p {
-  font-size: 17px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 32px;
+.members-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 34px;
 }
 .btn-gold {
   display: inline-flex;
