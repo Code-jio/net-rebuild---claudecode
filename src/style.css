@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+:root {
+  --navy-deep: #060d17;
+  --navy-mid: #0f1d32;
+  --blue: #2563eb;
+  --blue-light: #3b82f6;
+  --gold: #c8943e;
+  --gold-light: #d4a84b;
+  --bg-light: #f8f9fb;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --border-light: rgba(255, 255, 255, 0.08);
+  --text: #475569;
+  --text-h: #0f172a;
+  --text-light: rgba(255, 255, 255, 0.65);
+  --accent: var(--blue);
+  --accent-bg: rgba(37, 99, 235, 0.08);
+  --accent-border: rgba(37, 99, 235, 0.3);
+
+  --heading: 'Noto Sans SC', system-ui, sans-serif;
+  --body: 'Noto Sans SC', system-ui, sans-serif;
+  --number: 'Rajdhani', sans-serif;
+
+  font: 16px/1.6 var(--body);
+  color: var(--text);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--heading);
+  color: var(--text-h);
+  margin: 0;
+}
+
+h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--body);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 100px 0;
+}
+
+.section-dark {
+  background: var(--navy-deep);
+  color: var(--text-light);
+}
+
+.section-dark h2,
+.section-dark h3 {
+  color: #fff;
+}
+
+.section-mid {
+  background: var(--navy-mid);
+  color: var(--text-light);
+}
+
+.section-mid h2,
+.section-mid h3 {
+  color: #fff;
+}
+
+.section-light {
+  background: var(--bg-light);
+}
+
+.section-label {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  :root {
+    font-size: 15px;
+  }
+  h1 { font-size: 32px; }
+  h2 { font-size: 26px; }
+  h3 { font-size: 18px; }
+  .section { padding: 60px 0; }
+}
