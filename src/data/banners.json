@@ -1,11 +1,21 @@
 {
   "banner": [
     {
-      "image": "./images/Carousel/pic1.png",
+      "image": "https://mer.wuqiwan.cn/uploads/20260320/81f0c29e182f278cc42a5098b2bd3e92.jpg",
       "link": "/directory"
     },
     {
-      "image": "./images/Carousel/pic2.png",
+      "image": "https://mer.wuqiwan.cn/uploads/20260320/5235cc00ac7a1d9b3fae214bb5564ea0.jpg",
+      "link": ""
+    }
+  ],
+  "mo_banner": [
+    {
+      "image": "https://mer.wuqiwan.cn/uploads/20260320/81f0c29e182f278cc42a5098b2bd3e92.jpg",
+      "link": "/directory"
+    },
+    {
+      "image": "https://mer.wuqiwan.cn/uploads/20260320/5235cc00ac7a1d9b3fae214bb5564ea0.jpg",
       "link": ""
     }
   ]

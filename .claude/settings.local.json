@@ -63,7 +63,9 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/Carousel/pic1.jpg)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/Carousel/pic2.jpg)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/info/pic3.png)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/info/%E8%A5%BF%E5%B7%A5%E5%A4%A7.jpg)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/info/%E8%A5%BF%E5%B7%A5%E5%A4%A7.jpg)",
+      "Bash(curl -s --max-time 15 \"https://mer.wuqiwan.cn/api/index/detail/no/GnQyb?t=1\")",
+      "Bash(node -e \"process.stdin.on\\('data',d=>{const j=JSON.parse\\(d\\);console.log\\('photo:',j.data?.info?.photo||'NONE'\\)}\\)\")"
     ]
   }
 }

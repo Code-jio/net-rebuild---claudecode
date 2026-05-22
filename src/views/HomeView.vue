@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { fetchBanners, fetchCategories, fetchHomeContent, fetchMembers } from '../api'
 import MemberDiscovery from '../components/MemberDiscovery.vue'
 import HeroCarousel from '../components/HeroCarousel.vue'
+import HeroWaveBg from '../components/HeroWaveBg.vue'
 
 const banners = ref([])
 const services = ref([])
@@ -36,6 +37,7 @@ onMounted(async () => {
     <!-- Hero -->
     <section id="lab" class="hero">
       <div class="hero-bg-pattern"></div>
+      <HeroWaveBg />
       <div class="container hero-inner">
         <div class="hero-text">
           <div class="hero-badge">
@@ -303,7 +305,7 @@ onMounted(async () => {
   background: rgba(255, 255, 255, 0.04);
 }
 .hero-visual {
-  flex: 0 0 480px;
+  flex: 0 0 600px;
   position: relative;
   height: 400px;
   display: flex;

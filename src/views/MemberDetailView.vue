@@ -10,22 +10,35 @@ const allMembers = ref([])
 const loading = ref(true)
 
 onMounted(async () => {
-  loadMember()
-  fetchMembers().then(d => { allMembers.value = (d ?? []).map(m => normalizeMember(m)) })
+  const [detailData, listData] = await Promise.all([
+    loadMemberData(route.params.id),
+    fetchMembers().then(d => (d ?? []).map(m => normalizeMember(m)))
+  ])
+  allMembers.value = listData
+  applyMember(detailData)
 })
 
-watch(() => route.params.id, () => {
-  loadMember()
+watch(() => route.params.id, async (id) => {
+  const detailData = await loadMemberData(id)
+  applyMember(detailData)
   window.scrollTo(0, 0)
 })
 
-async function loadMember() {
+async function loadMemberData(id) {
   loading.value = true
   member.value = null
-  const id = route.params.id
-  const data = await fetchMemberDetail(id)
+  return fetchMemberDetail(id)
+}
+
+function applyMember(data) {
   const info = data?.info ?? data
-  member.value = info ? normalizeMember(info) : null
+  if (!info) { loading.value = false; return }
+  const normalized = normalizeMember(info)
+  if (!normalized.intro && allMembers.value.length) {
+    const lm = allMembers.value.find(m => m.id === normalized.id)
+    if (lm?.intro) normalized.intro = lm.intro
+  }
+  member.value = normalized
   loading.value = false
 }
 
@@ -63,25 +76,57 @@ const nextMember = computed(() => {
 const categoryName = computed(() => {
   return member.value?.categoryName ?? ''
 })
+
+function cleanInfo(value) {
+  if (!value || value === '/' || value === '无') return ''
+  return String(value).trim()
+}
+
+const infoRows = computed(() => {
+  if (!member.value) return []
+  return [
+    { label: '单位类型', value: categoryName.value },
+    { label: '成员身份', value: cleanInfo(member.value.identity_text || member.value.identity) },
+    { label: '成立时间', value: cleanInfo(member.value.established) },
+    { label: '联系人', value: cleanInfo(member.value.contact) },
+    { label: '电话', value: cleanInfo(member.value.phone) },
+    { label: '邮箱', value: cleanInfo(member.value.email), href: member.value.email ? `mailto:${member.value.email}` : '' },
+    { label: '地址', value: cleanInfo(member.value.address) },
+    { label: '网址', value: cleanInfo(member.value.website), href: member.value.website },
+  ].filter(row => row.value)
+})
+
+const hasFullContent = computed(() => Boolean(member.value?.content))
 </script>
 
 <template>
   <div class="detail-page" v-if="!loading && member">
     <!-- Header -->
     <section class="detail-hero">
-      <div class="container">
-        <div class="breadcrumb">
-          <router-link to="/">首页</router-link>
-          <span class="breadcrumb-sep">/</span>
-          <router-link to="/members">成员单位</router-link>
-          <span class="breadcrumb-sep">/</span>
-          <span>{{ member.name }}</span>
+      <div class="container detail-hero-grid" :class="{ 'no-media': !member.image }">
+        <div class="detail-hero-copy">
+          <div class="breadcrumb">
+            <router-link to="/">首页</router-link>
+            <span class="breadcrumb-sep">/</span>
+            <router-link to="/members">成员单位</router-link>
+            <span class="breadcrumb-sep">/</span>
+            <span>{{ member.name }}</span>
+          </div>
+          <span class="detail-category-badge">{{ categoryName }}</span>
+          <h1>{{ member.name }}</h1>
+          <div class="detail-tags" v-if="member.tech_tags.length || member.industry_tags.length">
+            <span v-for="t in member.tech_tags" :key="'t-'+t" class="tag tag-tech tag-lg">{{ t }}</span>
+            <span v-for="t in member.industry_tags" :key="'i-'+t" class="tag tag-industry tag-lg">{{ t }}</span>
+          </div>
+          <!-- <div class="hero-meta" v-if="infoRows.length">
+            <div v-for="row in infoRows.slice(0, 3)" :key="row.label">
+              <span>{{ row.label }}</span>
+              <strong>{{ row.value }}</strong>
+            </div>
+          </div> -->
         </div>
-        <span class="detail-category-badge">{{ categoryName }}</span>
-        <h1>{{ member.name }}</h1>
-        <div class="detail-tags" v-if="member.tech_tags.length || member.industry_tags.length">
-          <span v-for="t in member.tech_tags" :key="'t-'+t" class="tag tag-tech tag-lg">{{ t }}</span>
-          <span v-for="t in member.industry_tags" :key="'i-'+t" class="tag tag-industry tag-lg">{{ t }}</span>
+        <div class="detail-hero-media" v-if="member.image">
+          <img :src="member.image" :alt="member.name" />
         </div>
       </div>
     </section>
@@ -91,43 +136,25 @@ const categoryName = computed(() => {
       <div class="container detail-layout">
         <!-- Main -->
         <div class="detail-main">
-          <div class="detail-card" v-if="member.intro">
-            <h2>单位简介</h2>
-            <div class="detail-image" v-if="member.image">
-              <img :src="member.image" :alt="member.name" />
+          <article class="detail-article">
+            <div class="article-heading">
+              <h2 class="section-label">单位介绍</h2>
+              <!-- <h2>完整信息</h2> -->
             </div>
-            <p class="detail-intro">{{ member.intro }}</p>
-          </div>
-
-          <div class="detail-card" v-if="member.content">
-            <div class="detail-body" v-html="member.content"></div>
-          </div>
+            <div class="article-body" v-if="hasFullContent" v-html="member.content"></div>
+            <p class="article-body article-text" v-else-if="member.intro">{{ member.intro }}</p>
+          </article>
         </div>
 
         <!-- Sidebar -->
         <aside class="detail-sidebar">
-          <div class="detail-card info-card">
-            <h3>联系信息</h3>
+          <div class="info-panel">
+            <h3 class="section-label">单位档案</h3>
             <div class="info-grid">
-              <div class="info-item" v-if="member.contact">
-                <span class="info-label">联系人</span>
-                <span class="info-value">{{ member.contact }}</span>
-              </div>
-              <div class="info-item" v-if="member.phone">
-                <span class="info-label">电话</span>
-                <span class="info-value">{{ member.phone }}</span>
-              </div>
-              <div class="info-item" v-if="member.email">
-                <span class="info-label">邮箱</span>
-                <a class="info-value" :href="'mailto:' + member.email">{{ member.email }}</a>
-              </div>
-              <div class="info-item" v-if="member.address">
-                <span class="info-label">地址</span>
-                <span class="info-value">{{ member.address }}</span>
-              </div>
-              <div class="info-item" v-if="member.website">
-                <span class="info-label">网址</span>
-                <a class="info-value" :href="member.website" target="_blank" rel="noopener">{{ member.website }}</a>
+              <div class="info-item" v-for="row in infoRows" :key="row.label">
+                <span class="info-label">{{ row.label }}</span>
+                <a v-if="row.href" class="info-value" :href="row.href" target="_blank" rel="noopener">{{ row.value }}</a>
+                <span v-else class="info-value">{{ row.value }}</span>
               </div>
             </div>
           </div>
@@ -203,10 +230,32 @@ const categoryName = computed(() => {
 
 <style scoped>
 /* ── Hero ── */
+.detail-page {
+  background: var(--bg-light);
+}
 .detail-hero {
-  background: var(--navy-deep);
-  padding: 120px 0 48px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    var(--navy-deep);
+  background-size: 48px 48px;
+  padding: 116px 0 56px;
   color: #fff;
+}
+.detail-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+  gap: 42px;
+  align-items: end;
+}
+.detail-hero-grid.no-media {
+  grid-template-columns: minmax(0, 1fr);
+}
+.detail-hero-grid.no-media .detail-hero-copy {
+  max-width: 960px;
+}
+.detail-hero-copy {
+  min-width: 0;
 }
 .breadcrumb {
   font-size: 13px;
@@ -227,15 +276,63 @@ const categoryName = computed(() => {
   display: inline-block;
   font-size: 12px;
   font-weight: 600;
-  color: var(--accent);
-  background: rgba(37, 99, 235, 0.15);
-  padding: 4px 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  color: #fff;
+  background: rgba(200, 148, 62, 0.22);
+  border: 1px solid rgba(200, 148, 62, 0.36);
+  padding: 5px 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
 }
 .detail-hero h1 {
   color: #fff;
   margin-bottom: 16px;
+  max-width: 860px;
+}
+.detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hero-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 30px;
+}
+.hero-meta div {
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+}
+.hero-meta span {
+  display: block;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.hero-meta strong {
+  display: block;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.detail-hero-media {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+}
+.detail-hero-media img {
+  display: block;
+  width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* ── Tag large ── */
@@ -245,68 +342,97 @@ const categoryName = computed(() => {
 }
 
 /* ── Layout ── */
+.detail-content {
+  background: var(--bg-light);
+}
 .detail-layout {
   display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 40px;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 28px;
   align-items: start;
 }
-.detail-card {
+.detail-article,
+.info-panel {
   background: var(--white);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 36px;
-  margin-bottom: 24px;
+  border-radius: 8px;
+  box-shadow: 0 18px 44px rgba(15, 29, 50, 0.06);
 }
-.detail-card h2 {
-  font-size: 22px;
-  margin-bottom: 20px;
+.detail-article {
+  padding: 42px 48px;
 }
-.detail-card h3 {
-  margin-bottom: 16px;
+.article-heading {
+  padding-bottom: 24px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border);
 }
-.detail-image {
-  margin-bottom: 24px;
-  border-radius: 10px;
-  overflow: hidden;
+.article-heading h2 {
+  font-size: 28px;
 }
-.detail-image img {
-  width: 100%;
-  object-fit: cover;
-  max-height: 400px;
-}
-.detail-intro {
-  font-size: 16px;
-  line-height: 1.8;
+.article-body {
+  font-size: 17px;
+  line-height: 2;
   color: var(--text);
+  word-break: break-word;
+}
+.article-text {
   white-space: pre-wrap;
 }
-.detail-body {
-  font-size: 15px;
-  line-height: 1.8;
-  color: var(--text);
+.article-body :deep(p) {
+  margin: 0 0 22px;
+}
+.article-body :deep(p:last-child) {
+  margin-bottom: 0;
+}
+.article-body :deep(ul),
+.article-body :deep(ol) {
+  margin: 18px 0 24px;
+  padding-left: 1.4em;
+}
+.article-body :deep(li) {
+  margin-bottom: 10px;
+}
+.article-body :deep(img) {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 24px 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
 /* ── Info grid ── */
+.detail-sidebar {
+  position: sticky;
+  top: 88px;
+}
+.info-panel {
+  padding: 28px;
+}
+.info-panel h3 {
+  margin-bottom: 22px;
+}
 .info-grid {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
 }
 .info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  padding: 15px 0;
+  border-top: 1px solid var(--border);
 }
 .info-label {
+  display: block;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  margin-bottom: 5px;
 }
 .info-value {
-  font-size: 14px;
+  display: block;
+  font-size: 15px;
+  line-height: 1.65;
   color: var(--text-h);
   word-break: break-all;
 }
@@ -326,7 +452,7 @@ a.info-value {
 .member-card {
   background: var(--white);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 8px;
   padding: 24px;
   text-decoration: none;
   color: inherit;
@@ -358,10 +484,6 @@ a.info-value {
   font-size: 14px;
   color: #64748b;
   line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 /* ── Tags (shared) ── */
@@ -393,7 +515,7 @@ a.info-value {
   gap: 4px;
   padding: 20px 28px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 8px;
   text-decoration: none;
   transition: border-color 0.2s, background 0.2s;
   flex: 1;
@@ -417,8 +539,22 @@ a.info-value {
 }
 
 @media (max-width: 768px) {
+  .detail-hero {
+    padding: 104px 0 42px;
+  }
+  .detail-hero-grid,
   .detail-layout {
     grid-template-columns: 1fr;
+  }
+  .hero-meta {
+    grid-template-columns: 1fr;
+  }
+  .detail-article,
+  .info-panel {
+    padding: 24px;
+  }
+  .detail-sidebar {
+    position: static;
   }
   .prev-next {
     flex-direction: column;
