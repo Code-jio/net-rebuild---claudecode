@@ -136,7 +136,7 @@ export function normalizeWebsite(value) {
 
 export function normalizeMember(raw = {}, categories = []) {
   const categoryId = Number(raw.category_id ?? raw.category?.id)
-  const intro = stripHtml(raw.intro ?? raw.introduction ?? raw.summary ?? raw.content ?? '')
+  const intro = stripHtml(raw.intro ?? raw.introduction ?? raw.summary ?? '')
   const providedTechTags = parseTags(raw.tech_tags)
   const providedIndustryTags = parseTags(raw.industry_tags)
   const inferredWallKeywords = inferWallKeywords(raw, intro)

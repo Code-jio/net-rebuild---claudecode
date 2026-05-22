@@ -44,7 +44,26 @@
       "Bash(curl -s -o /dev/null -w \"5174: HTTP %{http_code}\\\\n\" http://localhost:5174)",
       "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\" \"https://zebra-unpaired-stapling.ngrok-free.dev/\")",
       "Bash(cmd //c \"taskkill /PID 21776 /F && taskkill /PID 32236 /F\")",
-      "Bash(\"C:\\\\Users\\\\f\\\\bin\\\\ngrok.exe\" http *)"
+      "Bash(\"C:\\\\Users\\\\f\\\\bin\\\\ngrok.exe\" http *)",
+      "Bash(echo \"---EXIT:$?---\")",
+      "Bash(pwsh -NoProfile -Command 'Get-Module -ListAvailable | Where-Object { $_.Name -match '\\\\''posh|oh-my|starship|terminal-icons|psreadline'\\\\'' } | Format-Table Name, Version')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5174)",
+      "Bash(curl -s http://localhost:5174/api/index/members)",
+      "Bash(curl -s --max-time 10 http://localhost:5174/api/index/members)",
+      "Bash(curl -s --max-time 20 \"https://mer.wuqiwan.cn/api/index/members?t=1\")",
+      "Bash(curl -s --max-time 20 \"https://mer.wuqiwan.cn/api/index/categories?t=1\")",
+      "Bash(curl -s --max-time 20 \"https://mer.wuqiwan.cn/api/index/banners?t=1\")",
+      "Bash(curl -s --max-time 20 \"https://mer.wuqiwan.cn/api/index/homeContent?t=1\")",
+      "Bash(curl -s --max-time 20 \"https://mer.wuqiwan.cn/api/index/detail/no/TZBio?t=1\")",
+      "Bash(node \"e:/learn/net-rebuild - claudecode/scripts/fetch-data.mjs\")",
+      "Bash(node -e \"const d = require\\('./src/data/member-details.json'\\); const keys = Object.keys\\(d\\); console.log\\('Detail count:', keys.length\\); console.log\\('First key:', keys[0]\\); console.log\\('Has info:', !!d[keys[0]]?.info\\); console.log\\('Has prev:', !!d[keys[0]]?.prev\\); console.log\\('Has next:', !!d[keys[0]]?.next\\)\")",
+      "Bash(node -e \"const m = require\\('./src/data/members.json'\\); console.log\\('Members count:', m.length\\); console.log\\('Sample mid:', m[0].mid\\); console.log\\('Has tech_tags:', m[0].hasOwnProperty\\('tech_tags'\\)\\); console.log\\('Has industry_tags:', m[0].hasOwnProperty\\('industry_tags'\\)\\)\")",
+      "Bash(curl -s --max-time 10 http://localhost:5174)",
+      "Bash(curl -s --max-time 10 http://localhost:5174/members)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/Carousel/pic1.jpg)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/Carousel/pic2.jpg)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/info/pic3.png)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5175/image/info/%E8%A5%BF%E5%B7%A5%E5%A4%A7.jpg)"
     ]
   }
 }

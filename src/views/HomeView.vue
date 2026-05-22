@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { fetchBanners, fetchCategories, fetchHomeContent, fetchMembers } from '../api'
 import MemberDiscovery from '../components/MemberDiscovery.vue'
+import HeroCarousel from '../components/HeroCarousel.vue'
 
 const banners = ref([])
 const services = ref([])
@@ -61,13 +62,7 @@ onMounted(async () => {
         <div class="hero-visual">
           <div class="hero-geo-ring"></div>
           <div class="hero-geo-line"></div>
-          <div class="hero-img-placeholder">
-            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-              <rect x="12" y="20" width="56" height="48" rx="4" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-              <path d="M28 44l8-12 10 8 14-16" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="24" cy="32" r="4" fill="rgba(255,255,255,0.2)"/>
-            </svg>
-          </div>
+          <HeroCarousel />
         </div>
       </div>
       <div class="hero-cofounders">
@@ -308,38 +303,26 @@ onMounted(async () => {
   background: rgba(255, 255, 255, 0.04);
 }
 .hero-visual {
-  flex: 0 0 420px;
+  flex: 0 0 480px;
   position: relative;
-  height: 360px;
+  height: 400px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .hero-geo-ring {
   position: absolute;
-  width: 300px;
-  height: 300px;
-  border: 2px solid rgba(255, 255, 255, 0.06);
+  width: 380px;
+  height: 380px;
+  border: 2px solid rgba(255, 255, 255, 0.04);
   border-radius: 50%;
 }
 .hero-geo-line {
   position: absolute;
-  width: 200px;
+  width: 260px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(200, 148, 62, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(200, 148, 62, 0.25), transparent);
   top: 50%;
-}
-.hero-img-placeholder {
-  width: 240px;
-  height: 240px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.02);
-  position: relative;
-  z-index: 1;
 }
 .hero-cofounders {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -600,11 +583,11 @@ onMounted(async () => {
   .hero-visual {
     flex: 0 0 auto;
     width: 100%;
-    height: 240px;
+    height: 280px;
   }
   .hero-geo-ring {
-    width: 200px;
-    height: 200px;
+    width: 220px;
+    height: 220px;
   }
   .services-grid,
   .sublabs-grid {

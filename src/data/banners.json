@@ -1,0 +1,12 @@
+{
+  "banner": [
+    {
+      "image": "./images/Carousel/pic1.png",
+      "link": "/directory"
+    },
+    {
+      "image": "./images/Carousel/pic2.png",
+      "link": ""
+    }
+  ]
+}

@@ -1,15 +1,25 @@
-const BASE = import.meta.env.DEV ? '' : 'https://mer.wuqiwan.cn'
+import members from '../data/members.json'
+import categories from '../data/categories.json'
+import banners from '../data/banners.json'
+import homeContent from '../data/home-content.json'
+import memberDetails from '../data/member-details.json'
 
-async function get(url, params = {}) {
-  params.t = Date.now()
-  const qs = new URLSearchParams(params).toString()
-  const resp = await fetch(`${BASE}${url}?${qs}`)
-  const data = await resp.json()
-  return data.data ?? data
+function asPromise(data) {
+  return Promise.resolve(data)
 }
 
-export function fetchMembers()        { return get('/api/index/members') }
-export function fetchCategories()     { return get('/api/index/categories') }
-export function fetchBanners()        { return get('/api/index/banners') }
-export function fetchHomeContent()    { return get('/api/index/homeContent') }
-export function fetchMemberDetail(id) { return get(`/api/index/detail/no/${id}`) }
+export function fetchMembers()        { return asPromise(members) }
+export function fetchCategories()     { return asPromise(categories) }
+
+export function fetchBanners() {
+  return asPromise(banners.banner ?? banners)
+}
+
+export function fetchHomeContent() {
+  return asPromise(homeContent)
+}
+
+export function fetchMemberDetail(id) {
+  const detail = memberDetails[id]
+  return asPromise(detail ?? null)
+}

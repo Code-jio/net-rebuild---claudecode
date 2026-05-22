@@ -1,0 +1,23 @@
+[
+  {
+    "id": 16,
+    "name": "企业",
+    "icon": "icon-bus",
+    "icon_text": "icon-bus",
+    "status_text": ""
+  },
+  {
+    "id": 15,
+    "name": "研究院",
+    "icon": "icon-lab",
+    "icon_text": "icon-lab",
+    "status_text": ""
+  },
+  {
+    "id": 14,
+    "name": "高校",
+    "icon": "icon-edu",
+    "icon_text": "icon-edu",
+    "status_text": ""
+  }
+]
