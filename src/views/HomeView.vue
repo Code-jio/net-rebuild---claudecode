@@ -10,6 +10,10 @@ const stats = ref([])
 const members = ref([])
 const categories = ref([])
 
+function scrollToServices() {
+  document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })
+}
+
 onMounted(async () => {
   const [bData, hData, mData, cData] = await Promise.all([
     fetchBanners(),
@@ -48,7 +52,7 @@ onMounted(async () => {
             提供测试验证、技术交流、产业对接一站式服务。
           </p>
           <div class="hero-actions">
-            <a href="#services" class="btn-primary" @click.prevent="document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })">
+            <a href="#services" class="btn-primary" @click.prevent="scrollToServices">
               探索业务模块
             </a>
             <router-link to="/members" class="btn-outline">寻找合作单位</router-link>

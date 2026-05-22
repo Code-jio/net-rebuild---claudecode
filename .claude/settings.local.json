@@ -42,7 +42,9 @@
       "Bash(node -e \"process.stdin.on\\('data',d=>{const tunnels=JSON.parse\\(d\\).tunnels;tunnels.forEach\\(t=>console.log\\(t.public_url\\)\\)}\\)\")",
       "Bash(curl -s -o /dev/null -w \"5173: HTTP %{http_code}\\\\n\" http://localhost:5173)",
       "Bash(curl -s -o /dev/null -w \"5174: HTTP %{http_code}\\\\n\" http://localhost:5174)",
-      "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\" \"https://zebra-unpaired-stapling.ngrok-free.dev/\")"
+      "Bash(curl -s -w \"\\\\nHTTP:%{http_code}\" \"https://zebra-unpaired-stapling.ngrok-free.dev/\")",
+      "Bash(cmd //c \"taskkill /PID 21776 /F && taskkill /PID 32236 /F\")",
+      "Bash(\"C:\\\\Users\\\\f\\\\bin\\\\ngrok.exe\" http *)"
     ]
   }
 }
